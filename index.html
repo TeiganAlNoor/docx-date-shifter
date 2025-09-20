@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DOCX Date Shifter</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>📅 DOCX Date Shifter</h1>
+      <p class="subtitle">Update weekly date ranges in Word documents - all processing happens in your browser!</p>
+    </header>
+
+    <main>
+      <!-- Instructions -->
+      <section class="instructions">
+        <h2>How to use:</h2>
+        <ol>
+          <li>Upload a .zip containing .docx files</li>
+          <li>Choose how to update dates: set new start date for week 1 or shift by days/weeks/months</li>
+          <li>Preview detected ranges and edit them if needed</li>
+          <li>Process and download the updated files</li>
+        </ol>
+        <p><strong>Privacy:</strong> All processing happens in your browser. Files never leave your computer.</p>
+      </section>
+
+      <!-- Upload Area -->
+      <section class="upload-section">
+        <div class="upload-area" id="uploadArea">
+          <div class="upload-content">
+            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7,10 12,15 17,10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <p>Drag & drop your .zip file here or <span class="upload-link">click to browse</span></p>
+            <p class="upload-hint">Upload any size ZIP file containing .docx documents</p>
+          </div>
+          <input type="file" id="fileInput" accept=".zip" hidden>
+        </div>
+
+        <button id="sampleDownload" class="sample-btn">📁 Download Sample ZIP</button>
+      </section>
+
+      <!-- Mode Selection -->
+      <section class="mode-section" id="modeSection" style="display: none;">
+        <h2>Date Update Mode</h2>
+        <div class="mode-options">
+          <label class="mode-option">
+            <input type="radio" name="mode" value="setStart" checked>
+            <div class="mode-content">
+              <h3>Set New Start Date for Week 1</h3>
+              <p>Pick a date for week 1, and weeks 2, 3, etc. will be calculated automatically</p>
+              <input type="date" id="startDate" class="date-input">
+            </div>
+          </label>
+
+          <label class="mode-option">
+            <input type="radio" name="mode" value="shift">
+            <div class="mode-content">
+              <h3>Shift All Dates</h3>
+              <p>Add or subtract time from all detected dates</p>
+              <div class="shift-controls">
+                <input type="number" id="shiftAmount" placeholder="0" min="-10000" max="10000">
+                <select id="shiftUnit">
+                  <option value="days">Days</option>
+                  <option value="weeks">Weeks</option>
+                  <option value="months">Months</option>
+                </select>
+              </div>
+            </div>
+          </label>
+        </div>
+      </section>
+
+      <!-- File List and Preview -->
+      <section class="preview-section" id="previewSection" style="display: none;">
+        <h2>Detected Files and Date Ranges</h2>
+        <div id="fileList" class="file-list"></div>
+      </section>
+
+      <!-- Process Button -->
+      <section class="process-section" id="processSection" style="display: none;">
+        <div class="process-summary" id="processSummary" style="display: none;">
+          <h3>📋 Changes Summary</h3>
+          <div id="changesSummary" class="changes-summary"></div>
+        </div>
+
+        <button id="processBtn" class="process-btn">🔄 Process & Download ZIP</button>
+        <p class="process-note">You will see a confirmation dialog before any changes are made.</p>
+
+        <div id="progressContainer" class="progress-container" style="display: none;">
+          <div class="progress-bar">
+            <div id="progressFill" class="progress-fill"></div>
+          </div>
+          <p id="progressText">Processing...</p>
+        </div>
+      </section>
+
+      <!-- Results -->
+      <section class="results-section" id="resultsSection" style="display: none;">
+        <h2>Processing Results</h2>
+        <div id="resultsContent" class="results-content"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- JavaScript Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/dayjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10/plugin/customParseFormat.js"></script>
+  <script src="main.js"></script>
+</body>
+
+</html>
