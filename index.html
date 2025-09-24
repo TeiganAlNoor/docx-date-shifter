@@ -6,13 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DOCX Date Shifter</title>
   <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon_io/favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon_io/favicon-32x32.png">
-    <link rel="icon" type="image/x-icon" href="favicon_io/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="favicon_io/apple-touch-icon.png">
-    <link rel="manifest" href="favicon_io/site.webmanifest">
-    <link rel="icon" type="image/png" sizes="192x192" href="favicon_io/android-chrome-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="favicon_io/android-chrome-512x512.png">
 </head>
 
 <body>
@@ -76,15 +69,23 @@
             <input type="radio" name="mode" value="shift">
             <div class="mode-content">
               <h3>Shift All Dates</h3>
-              <p>Add or subtract time from all detected dates</p>
-              <div class="shift-controls">
-                <input type="number" id="shiftAmount" placeholder="0" min="-10000" max="10000">
-                <select id="shiftUnit">
-                  <option value="days">Days</option>
-                  <option value="weeks">Weeks</option>
-                  <option value="months">Months</option>
-                </select>
+              <p>Add or subtract time from all detected dates (you can combine multiple units)</p>
+
+              <div class="shift-controls-combined">
+                <div class="shift-unit">
+                  <label for="shiftMonths">Months:</label>
+                  <input type="number" id="shiftMonths" placeholder="0" min="-120" max="120" value="0">
+                </div>
+                <div class="shift-unit">
+                  <label for="shiftWeeks">Weeks:</label>
+                  <input type="number" id="shiftWeeks" placeholder="0" min="-520" max="520" value="0">
+                </div>
+                <div class="shift-unit">
+                  <label for="shiftDays">Days:</label>
+                  <input type="number" id="shiftDays" placeholder="0" min="-3650" max="3650" value="0">
+                </div>
               </div>
+              <p class="shift-example">Example: 1 month + 2 weeks + 3 days = shift by 1 month, 2 weeks, and 3 days</p>
             </div>
           </label>
         </div>
@@ -131,4 +132,3 @@
 </body>
 
 </html>
-
