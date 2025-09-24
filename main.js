@@ -110,14 +110,14 @@ function setupModeHandlers() {
 function updateModeDisplay() {
   const selectedMode = document.querySelector('input[name="mode"]:checked').value;
   const startDateInput = document.getElementById('startDate');
-  const shiftControls = document.querySelector('.shift-controls');
+  const shiftControls = document.querySelector('.shift-controls-combined');
 
   if (selectedMode === 'setStart') {
     startDateInput.style.display = 'block';
-    shiftControls.style.display = 'none';
+    if (shiftControls) shiftControls.style.display = 'none';
   } else {
     startDateInput.style.display = 'none';
-    shiftControls.style.display = 'flex';
+    if (shiftControls) shiftControls.style.display = 'grid';
   }
 }
 
@@ -560,10 +560,13 @@ function updateReplacementPreviews() {
           replacement = calculateSetStartReplacement(firstRange, startDate, weekIndex);
         }
       } else {
-        const amount = parseInt(document.getElementById('shiftAmount').value) || 0;
-        const unit = document.getElementById('shiftUnit').value;
-        if (amount !== 0) {
-          replacement = calculateShiftReplacement(firstRange, amount, unit);
+        // Get values from all three shift inputs
+        const months = parseInt(document.getElementById('shiftMonths').value) || 0;
+        const weeks = parseInt(document.getElementById('shiftWeeks').value) || 0;
+        const days = parseInt(document.getElementById('shiftDays').value) || 0;
+
+        if (months !== 0 || weeks !== 0 || days !== 0) {
+          replacement = calculateCombinedShiftReplacement(firstRange, months, weeks, days);
         }
       }
 
@@ -756,7 +759,15 @@ function formatDateRange(startDate, endDate, pattern, originalText) {
 // Add event listeners to update previews when mode changes
 document.addEventListener('change', (e) => {
   if (e.target.name === 'mode' || e.target.id === 'startDate' ||
-    e.target.id === 'shiftAmount' || e.target.id === 'shiftUnit') {
+    e.target.id === 'shiftMonths' || e.target.id === 'shiftWeeks' || e.target.id === 'shiftDays') {
+    updateReplacementPreviews();
+  }
+});
+
+// Add input event listeners for real-time preview updates
+document.addEventListener('input', (e) => {
+  if (e.target.id === 'startDate' ||
+    e.target.id === 'shiftMonths' || e.target.id === 'shiftWeeks' || e.target.id === 'shiftDays') {
     updateReplacementPreviews();
   }
 });
@@ -1262,4 +1273,70 @@ async function downloadSample() {
     console.error('Error creating sample:', error);
     showError('Error creating sample files. Please try again.');
   }
+}
+
+/**
+ * Calculate and format replacement for combined shift (months + weeks + days)
+ * @param {object} range The date range object with startDate and endDate
+ * @param {number} months Number of months to shift
+ * @param {number} weeks Number of weeks to shift  
+ * @param {number} days Number of days to shift
+ * @returns {string} Replacement text preserving original format
+ */
+function calculateCombinedShiftReplacement(range, months, weeks, days) {
+  // If no shifts are specified, return original
+  if (!months && !weeks && !days) {
+    return range.originalText;
+  }
+
+  console.log(`Combined shift - Months: ${months}, Weeks: ${weeks}, Days: ${days}`);
+  console.log(`Original range:`, range);
+
+  if (!range.startDate || !range.endDate) {
+    console.warn('Invalid date range for combined shift:', range);
+    return range.originalText;
+  }
+
+  // Apply combined shifts to both start and end dates
+  let newStartDate = range.startDate;
+  let newEndDate = range.endDate;
+
+  if (months) {
+    newStartDate = newStartDate.add(parseInt(months), 'month');
+    newEndDate = newEndDate.add(parseInt(months), 'month');
+  }
+
+  if (weeks) {
+    newStartDate = newStartDate.add(parseInt(weeks), 'week');
+    newEndDate = newEndDate.add(parseInt(weeks), 'week');
+  }
+
+  if (days) {
+    newStartDate = newStartDate.add(parseInt(days), 'day');
+    newEndDate = newEndDate.add(parseInt(days), 'day');
+  }
+
+  // Analyze the original format more carefully
+  const originalText = range.originalText;
+  const original = originalText.toLowerCase();
+
+  // Detect separator style
+  let separator = '-';
+  if (originalText.includes(' - ')) {
+    separator = ' - ';
+  } else if (originalText.includes('–')) {
+    separator = '–';
+  } else if (originalText.includes('—')) {
+    separator = '—';
+  } else if (originalText.includes(' to ')) {
+    separator = ' to ';
+  } else if (originalText.includes(' - ')) {
+    separator = ' - ';
+  }
+
+  // Create replacement based on detected format
+  const replacement = `${newStartDate.format('DD/MM/YYYY')}${separator}${newEndDate.format('DD/MM/YYYY')}`;
+
+  console.log(`Combined shift: ${originalText} → ${replacement}`);
+  return replacement;
 }
