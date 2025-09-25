@@ -1316,27 +1316,9 @@ function calculateCombinedShiftReplacement(range, months, weeks, days) {
     newEndDate = newEndDate.add(parseInt(days), 'day');
   }
 
-  // Analyze the original format more carefully
-  const originalText = range.originalText;
-  const original = originalText.toLowerCase();
+  // Use the existing formatDateRange function to maintain format consistency
+  const replacement = formatDateRange(newStartDate, newEndDate, range.pattern, range.originalText);
 
-  // Detect separator style
-  let separator = '-';
-  if (originalText.includes(' - ')) {
-    separator = ' - ';
-  } else if (originalText.includes('–')) {
-    separator = '–';
-  } else if (originalText.includes('—')) {
-    separator = '—';
-  } else if (originalText.includes(' to ')) {
-    separator = ' to ';
-  } else if (originalText.includes(' - ')) {
-    separator = ' - ';
-  }
-
-  // Create replacement based on detected format
-  const replacement = `${newStartDate.format('DD/MM/YYYY')}${separator}${newEndDate.format('DD/MM/YYYY')}`;
-
-  console.log(`Combined shift: ${originalText} → ${replacement}`);
+  console.log(`Combined shift: ${range.originalText} → ${replacement}`);
   return replacement;
 }
